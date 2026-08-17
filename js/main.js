@@ -83,3 +83,49 @@
     }
   });
 })();
+
+(function(){
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var trailCanvas = document.createElement('canvas');
+  trailCanvas.style.position = 'fixed';
+  trailCanvas.style.top = '0';
+  trailCanvas.style.left = '0';
+  trailCanvas.style.width = '100%';
+  trailCanvas.style.height = '100%';
+  trailCanvas.style.pointerEvents = 'none';
+  trailCanvas.style.zIndex = '9999';
+  document.body.appendChild(trailCanvas);
+  var tctx = trailCanvas.getContext('2d');
+  var tw, th, particles = [];
+
+  function resizeTrail(){ tw = trailCanvas.width = window.innerWidth; th = trailCanvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeTrail);
+  resizeTrail();
+
+  function addPoint(x, y){
+    particles.push({ x: x, y: y, life: 1 });
+    if(particles.length > 40) particles.shift();
+  }
+  document.addEventListener('mousemove', function(e){ addPoint(e.clientX, e.clientY); });
+  document.addEventListener('touchmove', function(e){
+    if(e.touches && e.touches[0]) addPoint(e.touches[0].clientX, e.touches[0].clientY);
+  });
+
+  function drawTrail(){
+    tctx.clearRect(0, 0, tw, th);
+    for(var i = particles.length - 1; i >= 0; i--){
+      var p = particles[i];
+      p.life -= 0.035;
+      if(p.life <= 0){ particles.splice(i, 1); continue; }
+      tctx.beginPath();
+      tctx.arc(p.x, p.y, 2.5 * p.life, 0, Math.PI * 2);
+      tctx.fillStyle = 'rgba(244,197,66,' + (0.55 * p.life).toFixed(3) + ')';
+      tctx.shadowColor = 'rgba(244,197,66,0.8)';
+      tctx.shadowBlur = 6;
+      tctx.fill();
+    }
+    requestAnimationFrame(drawTrail);
+  }
+  requestAnimationFrame(drawTrail);
+})();
