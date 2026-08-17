@@ -119,7 +119,7 @@
       p.life -= 0.035;
       if(p.life <= 0){ particles.splice(i, 1); continue; }
       tctx.beginPath();
-      tctx.arc(p.x, p.y, 2.5 * p.life, 0, Math.PI * 2);
+      tctx.arc(p.x, p.y, 8 * p.life, 0, Math.PI * 2);
       tctx.fillStyle = 'rgba(244,197,66,' + (0.55 * p.life).toFixed(3) + ')';
       tctx.shadowColor = 'rgba(244,197,66,0.8)';
       tctx.shadowBlur = 6;
